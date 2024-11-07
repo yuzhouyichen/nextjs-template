@@ -101,7 +101,9 @@
 //   return insertedRevenue;
 // }
 
-// export async function GET() {
+export async function GET() {
+  return Response.json({ message: 'Hello, world!' });
+}
 //   try {
 //     await client.sql`BEGIN`;
 //     await seedUsers();
