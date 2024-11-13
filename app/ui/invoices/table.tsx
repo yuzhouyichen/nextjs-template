@@ -11,6 +11,7 @@ export default async function InvoicesTable({
   query: string;
   currentPage: number;
 }) {
+  // 获取过滤后的发票数据
   const invoices = await fetchFilteredInvoices(query, currentPage);
 
   return (
