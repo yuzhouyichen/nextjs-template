@@ -75,6 +75,15 @@ export async function updateInvoice(id: string, formData: FormData) {
 
 // 删除发票
 export async function deleteInvoice(id: string) {
-    await sql`DELETE FROM invoices WHERE id = ${id}`;
+    // 抛出错误,这里会直接在页面中显示错误信息
+    throw new Error('Failed to delete invoice.');
+
+    try {
+        await sql`DELETE FROM invoices WHERE id = ${id}`;
+    } catch (error) {
+        console.error('Failed to delete invoice:', error);
+        throw new Error('Failed to delete invoice.');
+    }
+    // 重新验证发票列表页面
     revalidatePath('/dashboard/invoices');
 }
