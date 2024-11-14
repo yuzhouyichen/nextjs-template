@@ -4,6 +4,14 @@ import RevenueChart from '@/app/ui/dashboard/revenue-chart';
 import LatestInvoices from '@/app/ui/dashboard/latest-invoices';
 import { lusitana } from '@/app/ui/fonts';
 import { LatestInvoicesSkeleton, RevenueChartSkeleton,CardsSkeleton } from '@/app/ui/skeletons';
+import { Metadata } from 'next';
+
+// 元数据, 负责显示在浏览器标签页上的网页标题。 它对搜索引擎优化至关重要，因为它能帮助搜索引擎了解网页的内容。
+export const metadata: Metadata = {
+  title: 'Dashboard',
+  description: 'The overview page',
+};
+
 
 // This is a server component,This allows you to use await to fetch data.
 const Dashboard = async () => {
