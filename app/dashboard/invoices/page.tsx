@@ -18,17 +18,17 @@ export const metadata: Metadata = {
 };
 
 // 使用props获取搜索参数
-export default async function Page(props: {
+export default async function Page({
+  searchParams,
+}: {
   searchParams?: {
     query?: string;
     page?: string;
   };
 }) {
-
-  // 获取搜索参数 必须使用await，因为searchParams是异步的
-  const searchParams = await props.searchParams;
-  const query = searchParams?.query || '';
-  const currentPage = parseInt(searchParams?.page || '1');
+  // 等待 searchParams 并提供默认值
+  const query = (await searchParams)?.query || '';
+  const currentPage = parseInt((await searchParams)?.page || '1');
 
   // 获取总页数
   const totalPages = await fetchInvoicesPages(query);
