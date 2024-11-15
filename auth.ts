@@ -17,6 +17,7 @@ export const { auth, signIn, signOut } = NextAuth({
     // 凭证认证
     Credentials({
       async authorize(credentials) {
+        console.log('credentials', credentials);
         // 解析凭证
         const parsedCredentials = z
           .object({ email: z.string().email(), password: z.string().min(6) })
