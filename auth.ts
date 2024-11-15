@@ -4,6 +4,12 @@ import Credentials from 'next-auth/providers/credentials';
 import { z } from 'zod';
 import { sql } from '@vercel/postgres';
 import bcrypt from 'bcrypt';
+
+// 添加自定义用户类型
+interface DbUser extends User {
+    password: string;
+  }
+
  
 export const { auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -36,9 +42,9 @@ export const { auth, signIn, signOut } = NextAuth({
 });
 
 // 从数据库中获取用户
-async function getUser(email: string): Promise<User | undefined> {
+async function getUser(email: string): Promise<DbUser | undefined> {
     try {
-      const user = await sql<User>`SELECT * FROM users WHERE email=${email}`;
+      const user = await sql<DbUser>`SELECT * FROM users WHERE email=${email}`;
       return user.rows[0];
     } catch (error) {
       console.error('Failed to fetch user:', error);

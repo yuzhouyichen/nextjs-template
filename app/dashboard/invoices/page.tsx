@@ -8,6 +8,7 @@ import { Suspense } from 'react';
 import { fetchInvoicesPages } from '@/app/lib/data';
 import { Metadata } from 'next';
 
+
 // 元数据, 负责显示在浏览器标签页上的网页标题。 它对搜索引擎优化至关重要，因为它能帮助搜索引擎了解网页的内容。
 export const metadata: Metadata = {
   title: 'Invoices',
@@ -19,18 +20,15 @@ export const metadata: Metadata = {
 
 // 使用props获取搜索参数
 // 添加 SearchParams 类型导入
-type SearchParams = { [key: string]: string | string[] | undefined };
-
-export default async function Page({
-  searchParams,
-}: {
-  // 使用正确的类型注解
-  searchParams: SearchParams;
+export default async function Page(props: {
+  searchParams?: Promise<{
+    query?: string;
+    page?: string;
+  }>;
 }) {
-  // 直接使用 searchParams，不需要 await
-  const query = searchParams.query?.toString() || '';
-  const currentPage = parseInt(searchParams.page?.toString() || '1');
-
+  const searchParams = await props.searchParams;
+  const query = searchParams?.query || '';
+  const currentPage = Number(searchParams?.page) || 1;
   // 获取总页数
   const totalPages = await fetchInvoicesPages(query);
     
