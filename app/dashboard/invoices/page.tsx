@@ -21,14 +21,12 @@ export const metadata: Metadata = {
 export default async function Page({
   searchParams,
 }: {
-  searchParams?: {
-    query?: string;
-    page?: string;
-  };
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  // 等待 searchParams 并提供默认值
-  const query = (await searchParams)?.query || '';
-  const currentPage = parseInt((await searchParams)?.page || '1');
+ // 需要先 await searchParams
+ const params = await searchParams;
+ const query = params.query?.toString() || '';
+ const currentPage = parseInt(params.page?.toString() || '1');
 
   // 获取总页数
   const totalPages = await fetchInvoicesPages(query);
