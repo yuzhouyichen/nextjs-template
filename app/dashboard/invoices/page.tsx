@@ -18,15 +18,18 @@ export const metadata: Metadata = {
 };
 
 // 使用props获取搜索参数
+// 添加 SearchParams 类型导入
+type SearchParams = { [key: string]: string | string[] | undefined };
+
 export default async function Page({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  // 使用正确的类型注解
+  searchParams: SearchParams;
 }) {
- // 需要先 await searchParams
- const params = await searchParams;
- const query = params.query?.toString() || '';
- const currentPage = parseInt(params.page?.toString() || '1');
+  // 直接使用 searchParams，不需要 await
+  const query = searchParams.query?.toString() || '';
+  const currentPage = parseInt(searchParams.page?.toString() || '1');
 
   // 获取总页数
   const totalPages = await fetchInvoicesPages(query);
