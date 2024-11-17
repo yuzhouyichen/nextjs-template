@@ -1,12 +1,11 @@
 "use server";
 
-import { sql } from '@vercel/postgres';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
-
+import { supabase } from '@/app/lib/supabase';
 
 // 创建发票的Schema,包含id和date,作用是验证数据
 const InvoiceSchema = z.object({
@@ -71,10 +70,18 @@ export async function createInvoice(state: State, formData: FormData) {
 
     // 创建发票
     try {
-        await sql`
-            INSERT INTO invoices (customer_id, amount, status, date)
-            VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
-        `;
+        const { error } = await supabase
+            .from('invoices')
+            .insert([
+                { 
+                    customer_id: customerId, 
+                    amount: amountInCents, 
+                    status, 
+                    date 
+                }
+            ]);
+
+        if (error) throw error;
     } catch (error) {
         console.error('Failed to create invoice:', error);
         return {
@@ -87,7 +94,6 @@ export async function createInvoice(state: State, formData: FormData) {
     // 重定向到发票列表页面
     redirect('/dashboard/invoices');
 }
-
 
 // 更新发票的Schema，不包含id和date
 const UpdateInvoice = InvoiceSchema.omit({ id: true, date: true });
@@ -112,9 +118,16 @@ export async function updateInvoice( id: string,prevState: State, formData: Form
     const amountInCents = amount * 100;
     // 更新发票
     try {
-        await sql`
-        UPDATE invoices SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status} WHERE id = ${id}
-    `;
+        const { error } = await supabase
+            .from('invoices')
+            .update({ 
+                customer_id: customerId, 
+                amount: amountInCents, 
+                status 
+            })
+            .eq('id', id);
+
+        if (error) throw error;
     } catch (error) {
         console.error('Failed to update invoice:', error);
         return {
@@ -129,11 +142,13 @@ export async function updateInvoice( id: string,prevState: State, formData: Form
 
 // 删除发票
 export async function deleteInvoice(id: string) {
-    // 抛出错误,这里会直接在页面中显示错误信息
-    throw new Error('Failed to delete invoice.');
-
     try {
-        await sql`DELETE FROM invoices WHERE id = ${id}`;
+        const { error } = await supabase
+            .from('invoices')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
     } catch (error) {
         console.error('Failed to delete invoice:', error);
         throw new Error('Failed to delete invoice.');
